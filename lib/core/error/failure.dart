@@ -11,3 +11,7 @@ class ServerFailure extends Failure {
 class NetworkFailure extends Failure {
   NetworkFailure([super.message = 'Sem conexão']);
 }
+
+class CacheFailure extends Failure {
+  CacheFailure([super.message = 'Erro de cache']);
+}
