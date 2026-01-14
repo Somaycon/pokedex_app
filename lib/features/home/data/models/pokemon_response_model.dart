@@ -2,12 +2,14 @@ import 'package:pokedex_app/features/home/data/models/pokemon_model.dart';
 
 class PokemonResponseModel {
   final int count;
-  final String next;
+  final String? next;
+  final String? previous;
   final List<PokemonModel> results;
 
   PokemonResponseModel({
     required this.count,
-    required this.next,
+    this.next,
+    this.previous,
     required this.results,
   });
 
@@ -15,6 +17,7 @@ class PokemonResponseModel {
     return PokemonResponseModel(
       count: json['count'],
       next: json['next'],
+      previous: json['previous'],
       results: (json['results'] as List)
           .map<PokemonModel>((e) => PokemonModel.fromJson(e))
           .toList(),

@@ -8,8 +8,21 @@ class PokemonDatasource {
     required this.dio,
   });
 
-  Future<PokemonResponseModel> getPokemons() async {
-    final response = await dio.get('https://pokeapi.co/api/v2/pokemon');
-    return PokemonResponseModel.fromJson(response.data);
+  Future<PokemonResponseModel> getPokemons({
+    int limit = 20,
+    int offset = 0,
+  }) async {
+    try {
+      final response = await dio.get(
+        'https://pokeapi.co/api/v2/pokemon',
+        queryParameters: {
+          'limit': limit,
+          'offset': offset,
+        },
+      );
+      return PokemonResponseModel.fromJson(response.data);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

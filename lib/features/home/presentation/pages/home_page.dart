@@ -13,11 +13,27 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final controller = Modular.get<HomeController>();
+  late ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
     controller.init();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 500) {
+      controller.loadMorePokemons();
+    }
   }
 
   @override
@@ -43,6 +59,11 @@ class _HomePageState extends State<HomePage> {
             ),
             HomeLoadedState() => HomeLoadedWidget(
               pokemonList: controller.pokemonList,
+              isLoadMore: controller.isLoadingMore,
+              scrollController: _scrollController,
+              onLoadMore: () {
+                controller.loadMorePokemons();
+              },
             ),
             HomeErrorState() => throw UnimplementedError(),
           };

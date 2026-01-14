@@ -9,8 +9,11 @@ class PokemonRepository {
     required this.pokemonDatasource,
   });
 
-  Future<PokemonResponseModel> getPokemons() async {
-    return pokemonDatasource.getPokemons();
+  Future<PokemonResponseModel> getPokemons({
+    int limit = 20,
+    int offset = 0,
+  }) async {
+    return pokemonDatasource.getPokemons(limit: limit, offset: offset);
   }
 
   Future<PokemonEntity> getPokemonByName(String name) async {
