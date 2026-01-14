@@ -1,14 +1,8 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:pokedex_app/app_module.dart';
 import 'package:pokedex_app/features/splash/presentation/controller/splash_controller.dart';
 import 'package:pokedex_app/features/splash/presentation/pages/splash_page.dart';
 
 class SplashModule extends Module {
-  @override
-  List<Module> get imports => [
-    AppModule(),
-  ];
-
   @override
   void binds(Injector i) {
     i.addLazySingleton(SplashController.new);

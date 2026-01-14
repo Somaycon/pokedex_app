@@ -23,4 +23,12 @@ class PokemonResponseModel {
           .toList(),
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'count': count,
+      'next': next,
+      'previous': previous,
+      'results': results.map((e) => e.toJson()).toList(),
+    };
+  }
 }

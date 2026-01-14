@@ -1,6 +1,8 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:pokedex_app/app_module.dart';
-import 'package:pokedex_app/features/home/data/datasources/pokemon_datasource.dart';
+import 'package:pokedex_app/features/home/data/datasources/pokemon_local_datasource.dart';
+import 'package:pokedex_app/features/home/data/datasources/pokemon_local_datasource_impl.dart';
+import 'package:pokedex_app/features/home/data/datasources/pokemon_remote_datasource.dart';
 import 'package:pokedex_app/features/home/data/repositories/pokemon_repository_impl.dart';
 import 'package:pokedex_app/features/home/domain/repositories/pokemon_repository.dart';
 import 'package:pokedex_app/features/home/domain/usecases/get_pokemon_list_use_case.dart';
@@ -15,9 +17,15 @@ class HomeModule extends Module {
 
   @override
   void binds(Injector i) {
-    i.addLazySingleton(PokemonDatasource.new);
+    i.addLazySingleton(PokemonRemoteDatasource.new);
+    i.addLazySingleton<PokemonLocalDatasource>(
+      () => PokemonLocalDatasourceImpl(),
+    );
     i.addLazySingleton<PokemonRepository>(
-      () => PokemonRepositoryImpl(pokemonDatasource: i()),
+      () => PokemonRepositoryImpl(
+        remoteDatasource: i(),
+        localDatasource: i(),
+      ),
     );
     i.addLazySingleton(GetPokemonListUseCase.new);
     i.addLazySingleton(HomeController.new);

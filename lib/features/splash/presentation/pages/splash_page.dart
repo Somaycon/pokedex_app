@@ -23,6 +23,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.red,
       body: Center(
         child: switch (controller.splashState) {
           SplashLoadedState() => SplashLoadedWidget(),

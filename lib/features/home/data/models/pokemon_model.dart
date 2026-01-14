@@ -12,4 +12,10 @@ class PokemonModel extends PokemonEntity {
       url: json['url'],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'url': url,
+    };
+  }
 }
