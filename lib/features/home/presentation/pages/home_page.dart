@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:pokedex_app/features/home/presentation/controller/home_controller.dart';
 import 'package:pokedex_app/features/home/presentation/state/home_states.dart';
+import 'package:pokedex_app/features/home/presentation/widgets/home_error_widget.dart';
 import 'package:pokedex_app/features/home/presentation/widgets/home_loaded_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -65,7 +66,10 @@ class _HomePageState extends State<HomePage> {
                 controller.loadMorePokemons();
               },
             ),
-            HomeErrorState() => throw UnimplementedError(),
+            HomeErrorState(:final message) => HomeErrorWidget(
+              message: message,
+              onPressed: controller.init,
+            ),
           };
         },
       ),

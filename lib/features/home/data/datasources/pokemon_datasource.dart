@@ -1,28 +1,37 @@
 import 'package:dio/dio.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:pokedex_app/core/error/failure.dart';
+import 'package:pokedex_app/core/network/api_client.dart';
 import 'package:pokedex_app/features/home/data/models/pokemon_response_model.dart';
 
 class PokemonDatasource {
-  final Dio dio;
+  final ApiClient apiClient;
 
   PokemonDatasource({
-    required this.dio,
+    required this.apiClient,
   });
 
-  Future<PokemonResponseModel> getPokemons({
+  Future<Either<Failure, PokemonResponseModel>> getPokemons({
     int limit = 20,
     int offset = 0,
   }) async {
     try {
-      final response = await dio.get(
-        'https://pokeapi.co/api/v2/pokemon',
+      final response = await apiClient.get(
+        '/pokemon',
         queryParameters: {
           'limit': limit,
           'offset': offset,
         },
       );
-      return PokemonResponseModel.fromJson(response.data);
-    } catch (e) {
-      rethrow;
+      return Right(PokemonResponseModel.fromJson(response.data));
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        return Left(ServerFailure('Tempo Esgotado. Verifique sua conexão.'));
+      }
+      return Left(NetworkFailure('Erro de rede. Tente novamente.'));
+    } catch (_) {
+      return Left(ServerFailure('Erro inesperado. Tente novamente.'));
     }
   }
 }
