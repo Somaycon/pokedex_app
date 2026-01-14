@@ -4,10 +4,10 @@ import 'package:pokedex_app/core/error/failure.dart';
 import 'package:pokedex_app/core/network/api_client.dart';
 import 'package:pokedex_app/features/home/data/models/pokemon_response_model.dart';
 
-class PokemonDatasource {
+class PokemonRemoteDatasource {
   final ApiClient apiClient;
 
-  PokemonDatasource({
+  PokemonRemoteDatasource({
     required this.apiClient,
   });
 
