@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:pokedex_app/app_module.dart';
+import 'package:pokedex_app/core/helpers/shared_prefs_helper.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SharedPrefsHelper.instance;
   runApp(
     ModularApp(
       module: AppModule(),
