@@ -1,4 +1,3 @@
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:pokedex_app/features/splash/presentation/state/splash_states.dart';
 
 class SplashController {
