@@ -8,7 +8,7 @@ class GetPokemonListUseCase {
     required this.repository,
   });
 
-  Future<PokemonResponseModel> call() async {
-    return await repository.getPokemons();
+  Future<PokemonResponseModel> call({int limit = 20, int offset = 0}) async {
+    return await repository.getPokemons(limit: limit, offset: offset);
   }
 }
