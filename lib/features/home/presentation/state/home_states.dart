@@ -14,4 +14,8 @@ class HomeLoadedState extends HomeStates {
   });
 }
 
-class HomeErrorState extends HomeStates {}
+class HomeErrorState extends HomeStates {
+  final String message;
+
+  HomeErrorState({required this.message});
+}
