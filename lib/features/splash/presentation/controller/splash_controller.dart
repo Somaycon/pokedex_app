@@ -7,6 +7,6 @@ class SplashController {
   Future<void> init() async {
     // TODO: Adicionar lógica de carregamento
     await Future.delayed(const Duration(seconds: 2));
-    Modular.to.navigate('/home');
+    Modular.to.navigate('/home/');
   }
 }
