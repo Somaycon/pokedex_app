@@ -21,6 +21,7 @@ class PokemonDetailController extends ChangeNotifier {
     speciesUrl: '',
   );
   EvolutionChainModel? evolutionChainModel;
+  int? _currentEvolutionRequestId;
 
   PokemonDetailStates pokemonDetailState = PokemonDetailInitialState();
   EvolutionChainStates evolutionChainState = EvolutionChainInitialState();
@@ -55,10 +56,15 @@ class PokemonDetailController extends ChangeNotifier {
   }
 
   Future<void> loadEvolutionChain(int id) async {
+    _currentEvolutionRequestId = id;
     evolutionChainState = EvolutionChainLoadingState();
     notifyListeners();
+
     final Either<Failure, EvolutionChainModel> response =
         await getPokemonEvolutionChainUseCase(id);
+
+    if (_currentEvolutionRequestId != id) return;
+
     response.fold(
       (exception) {
         if (exception is NotFoundFailure) {
@@ -76,8 +82,8 @@ class PokemonDetailController extends ChangeNotifier {
         evolutionChainState = EvolutionChainLoadedState(
           evolutionChain: evolutionChainModel!,
         );
+        notifyListeners();
       },
     );
-    notifyListeners();
   }
 }

@@ -57,4 +57,36 @@ void main() {
     );
     verify(() => mockRepo.getEvolutionChain(1)).called(1);
   });
+
+  test('deve propagar NotFoundFailure corretamente', () async {
+    final failure = NotFoundFailure('não encontrado');
+    when(() => mockRepo.getEvolutionChain(2)).thenAnswer(
+      (_) async => Left<Failure, EvolutionChainModel>(failure),
+    );
+
+    final result = await usecase.call(2);
+
+    expect(result.isLeft(), true);
+    result.match(
+      (l) => expect(l, isA<NotFoundFailure>()),
+      (r) => fail('expected Left, got Right'),
+    );
+    verify(() => mockRepo.getEvolutionChain(2)).called(1);
+  });
+
+  test('deve propagar NetworkFailure corretamente', () async {
+    final failure = NetworkFailure('timeout');
+    when(() => mockRepo.getEvolutionChain(3)).thenAnswer(
+      (_) async => Left<Failure, EvolutionChainModel>(failure),
+    );
+
+    final result = await usecase.call(3);
+
+    expect(result.isLeft(), true);
+    result.match(
+      (l) => expect(l, isA<NetworkFailure>()),
+      (r) => fail('expected Left, got Right'),
+    );
+    verify(() => mockRepo.getEvolutionChain(3)).called(1);
+  });
 }
