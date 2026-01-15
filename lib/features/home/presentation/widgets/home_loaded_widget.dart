@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:pokedex_app/features/home/data/models/pokemon_model.dart';
 import 'package:pokedex_app/features/home/presentation/widgets/pokemon_card_widget.dart';
 
@@ -25,24 +26,35 @@ class HomeLoadedWidget extends StatelessWidget {
         }
         return false;
       },
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          childAspectRatio: 3 / 4,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            childAspectRatio: 3 / 4,
+          ),
+          itemCount: pokemonList.length + (isLoadMore ? 1 : 0),
+          itemBuilder: (context, index) {
+            if (index == pokemonList.length) {
+              return Center(child: CircularProgressIndicator());
+            }
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                onTap: () {
+                  Modular.to.pushNamed(
+                    '/home/pokemon-detail',
+                    arguments: pokemonList[index].name,
+                  );
+                },
+                child: PokemonCardWidget(
+                  url: pokemonList[index].url,
+                  name: pokemonList[index].name,
+                ),
+              ),
+            );
+          },
         ),
-        itemCount: pokemonList.length + (isLoadMore ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index == pokemonList.length) {
-            return Center(child: CircularProgressIndicator());
-          }
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: PokemonCardWidget(
-              url: pokemonList[index].url,
-              name: pokemonList[index].name,
-            ),
-          );
-        },
       ),
     );
   }

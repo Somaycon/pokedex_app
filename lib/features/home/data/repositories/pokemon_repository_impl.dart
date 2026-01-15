@@ -2,8 +2,8 @@ import 'package:fpdart/fpdart.dart';
 import 'package:pokedex_app/core/error/failure.dart';
 import 'package:pokedex_app/features/home/data/datasources/pokemon_local_datasource.dart';
 import 'package:pokedex_app/features/home/data/datasources/pokemon_remote_datasource.dart';
+import 'package:pokedex_app/features/home/data/models/pokemon_detail_model.dart';
 import 'package:pokedex_app/features/home/data/models/pokemon_response_model.dart';
-import 'package:pokedex_app/features/home/domain/entities/pokemon_entity.dart';
 import 'package:pokedex_app/features/home/domain/repositories/pokemon_repository.dart';
 
 class PokemonRepositoryImpl implements PokemonRepository {
@@ -45,7 +45,21 @@ class PokemonRepositoryImpl implements PokemonRepository {
   }
 
   @override
-  Future<PokemonEntity> getPokemonByName(String name) {
-    throw UnimplementedError();
+  Future<Either<Failure, PokemonDetailModel>> getPokemonByName(
+    String name,
+  ) async {
+    try {
+      final remotePokemonResult = await remoteDatasource.getPokemonByName(name);
+      if (remotePokemonResult.isRight()) {
+        final remotePokemonData = remotePokemonResult.getOrElse(
+          (l) => throw l,
+        );
+        return Right(remotePokemonData);
+      } else {
+        return remotePokemonResult;
+      }
+    } catch (e) {
+      throw ServerFailure('Erro ao buscar Pokémon por nome.');
+    }
   }
 }

@@ -5,4 +5,4 @@ abstract class PokemonLocalDatasource {
   Future<PokemonResponseModel?> getLastPokemons();
 }
 
-const CACHED_POKEMONS_KEY = 'CACHED_POKEMONS';
+const cached_pokemons_key = 'CACHED_POKEMONS';
