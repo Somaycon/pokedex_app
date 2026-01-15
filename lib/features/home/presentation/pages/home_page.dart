@@ -74,10 +74,12 @@ class _HomePageState extends State<HomePage> {
               controller: _searchController,
               focusNode: _searchFocusNode,
               textInputAction: TextInputAction.search,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: 'Buscar Pokémon por nome',
                 prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(80),
+                ),
               ),
               onChanged: (value) async {
                 final q = value.trim().toLowerCase();
