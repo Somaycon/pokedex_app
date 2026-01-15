@@ -58,10 +58,29 @@ class PokemonRemoteDatasource {
     int id,
   ) async {
     try {
-      final response = await apiClient.get('/evolution-chain/$id/');
-      final evolutionChain = EvolutionChainModel.fromJson(
-        response.data,
-      );
+      final speciesResponse = await apiClient.get('/pokemon-species/$id/');
+      final chainInfo =
+          speciesResponse.data['evolution_chain'] as Map<String, dynamic>?;
+      final chainUrl = chainInfo?['url'] as String?;
+      if (chainUrl == null) {
+        return Left(ServerFailure('Evolution chain not found for species $id'));
+      }
+
+      final uri = Uri.parse(chainUrl);
+      final segments = uri.pathSegments.where((s) => s.isNotEmpty).toList();
+      if (segments.isEmpty) {
+        return Left(ServerFailure('Invalid evolution chain url: $chainUrl'));
+      }
+      final chainIdStr = segments.last;
+      final chainId = int.tryParse(chainIdStr);
+      if (chainId == null) {
+        return Left(
+          ServerFailure('Invalid evolution chain id parsed from $chainUrl'),
+        );
+      }
+
+      final response = await apiClient.get('/evolution-chain/$chainId/');
+      final evolutionChain = EvolutionChainModel.fromJson(response.data);
       return Right(evolutionChain);
     } catch (e) {
       return Left(ServerFailure(e.toString()));

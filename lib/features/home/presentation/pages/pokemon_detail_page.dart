@@ -33,26 +33,32 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
+        scrolledUnderElevation: 0.0,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
       ),
-      body: ListenableBuilder(
-        listenable: controller,
-        builder: (context, child) => switch (controller.pokemonDetailState) {
-          PokemonDetailInitialState() => const Center(
-            child: CircularProgressIndicator(),
-          ),
-          PokemonDetailLoadingState() => const Center(
-            child: CircularProgressIndicator(),
-          ),
-          PokemonDetailLoadedState() => PokemonDetailLoadedWidget(
-            pokemon: controller.pokemon,
-            controller: controller,
-            pokemonId: widget.pokemonId,
-          ),
-          PokemonDetailErrorState(:final message) => HomeErrorWidget(
-            message: message,
-            onPressed: () => controller.init(widget.name),
-          ),
-        },
+      body: SingleChildScrollView(
+        child: ListenableBuilder(
+          listenable: controller,
+          builder: (context, child) => switch (controller.pokemonDetailState) {
+            PokemonDetailInitialState() => const Center(
+              child: CircularProgressIndicator(),
+            ),
+            PokemonDetailLoadingState() => const Center(
+              child: CircularProgressIndicator(),
+            ),
+            PokemonDetailLoadedState() => PokemonDetailLoadedWidget(
+              pokemon: controller.pokemon,
+              controller: controller,
+              pokemonId: widget.pokemonId,
+            ),
+            PokemonDetailErrorState(:final message) => HomeErrorWidget(
+              message: message,
+              onPressed: () => controller.init(widget.name),
+            ),
+          },
+        ),
       ),
     );
   }

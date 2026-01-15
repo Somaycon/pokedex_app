@@ -12,11 +12,13 @@ class PokemonDetailController extends ChangeNotifier {
   final GetPokemonDetailUseCase getPokemonDetailUseCase;
   final GetPokemonEvolutionChainUseCase getPokemonEvolutionChainUseCase;
   PokemonDetailModel pokemon = PokemonDetailModel(
+    id: 0,
     name: '',
     imageUrl: '',
     types: [],
     height: 0,
     weight: 0,
+    speciesUrl: '',
   );
   EvolutionChainModel? evolutionChainModel;
 
@@ -72,11 +74,5 @@ class PokemonDetailController extends ChangeNotifier {
       },
     );
     notifyListeners();
-  }
-
-  int extractPokemonId(String url) {
-    final parts = url.split('/').where((part) => part.isNotEmpty).toList();
-    final id = parts.last;
-    return int.parse(id);
   }
 }
