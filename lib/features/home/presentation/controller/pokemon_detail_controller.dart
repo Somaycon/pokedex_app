@@ -1,12 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:pokedex_app/core/error/failure.dart';
+import 'package:pokedex_app/features/home/data/models/evolution_chain_model.dart';
 import 'package:pokedex_app/features/home/data/models/pokemon_detail_model.dart';
 import 'package:pokedex_app/features/home/domain/usecases/get_pokemon_detail_usecase.dart';
+import 'package:pokedex_app/features/home/domain/usecases/get_pokemon_evolution_chain_usecase.dart';
+import 'package:pokedex_app/features/home/presentation/state/evolution_chain_states.dart';
 import 'package:pokedex_app/features/home/presentation/state/pokemon_detail_states.dart';
 
 class PokemonDetailController extends ChangeNotifier {
   final GetPokemonDetailUseCase getPokemonDetailUseCase;
+  final GetPokemonEvolutionChainUseCase getPokemonEvolutionChainUseCase;
   PokemonDetailModel pokemon = PokemonDetailModel(
     name: '',
     imageUrl: '',
@@ -14,10 +18,14 @@ class PokemonDetailController extends ChangeNotifier {
     height: 0,
     weight: 0,
   );
+  EvolutionChainModel? evolutionChainModel;
+
   PokemonDetailStates pokemonDetailState = PokemonDetailInitialState();
+  EvolutionChainStates evolutionChainState = EvolutionChainInitialState();
 
   PokemonDetailController({
     required this.getPokemonDetailUseCase,
+    required this.getPokemonEvolutionChainUseCase,
   });
 
   Future<void> init(String name) async {
@@ -42,5 +50,33 @@ class PokemonDetailController extends ChangeNotifier {
       },
     );
     notifyListeners();
+  }
+
+  Future<void> loadEvolutionChain(int id) async {
+    evolutionChainState = EvolutionChainLoadingState();
+    notifyListeners();
+    final Either<Failure, EvolutionChainModel> response =
+        await getPokemonEvolutionChainUseCase(id);
+    response.fold(
+      (exception) {
+        evolutionChainState = EvolutionChainErrorState(
+          message: exception.toString(),
+        );
+        notifyListeners();
+      },
+      (response) {
+        evolutionChainModel = response;
+        evolutionChainState = EvolutionChainLoadedState(
+          evolutionChain: evolutionChainModel!,
+        );
+      },
+    );
+    notifyListeners();
+  }
+
+  int extractPokemonId(String url) {
+    final parts = url.split('/').where((part) => part.isNotEmpty).toList();
+    final id = parts.last;
+    return int.parse(id);
   }
 }
