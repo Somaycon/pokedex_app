@@ -11,6 +11,13 @@ class EvolutionChainLoadedState extends EvolutionChainStates {
   EvolutionChainLoadedState({required this.evolutionChain});
 }
 
+class EvolutionChainEmptyState extends EvolutionChainStates {
+  final String message;
+  EvolutionChainEmptyState({
+    this.message = 'Nenhuma linha evolutiva disponível.',
+  });
+}
+
 class EvolutionChainErrorState extends EvolutionChainStates {
   final String message;
   EvolutionChainErrorState({required this.message});

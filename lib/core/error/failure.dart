@@ -15,3 +15,7 @@ class NetworkFailure extends Failure {
 class CacheFailure extends Failure {
   CacheFailure([super.message = 'Erro de cache']);
 }
+
+class NotFoundFailure extends Failure {
+  NotFoundFailure([super.message = 'Recurso não encontrado']);
+}

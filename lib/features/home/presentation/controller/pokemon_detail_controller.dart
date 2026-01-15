@@ -61,8 +61,13 @@ class PokemonDetailController extends ChangeNotifier {
         await getPokemonEvolutionChainUseCase(id);
     response.fold(
       (exception) {
+        if (exception is NotFoundFailure) {
+          evolutionChainState = EvolutionChainEmptyState();
+          notifyListeners();
+          return;
+        }
         evolutionChainState = EvolutionChainErrorState(
-          message: exception.toString(),
+          message: exception.message,
         );
         notifyListeners();
       },

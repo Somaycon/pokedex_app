@@ -27,27 +27,49 @@ class PokemonCardWidget extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        spacing: 10,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Image.network(
-            controller.getPokemonImageUrl(url),
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                color: Colors.grey[300],
-                child: const Icon(Icons.broken_image),
-              );
-            },
-          ),
-          Text(
-            name,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Row(
+              spacing: 25,
+              children: [
+                Image.network(
+                  width: 80,
+                  controller.getPokemonImageUrl(url),
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.broken_image),
+                    );
+                  },
+                ),
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Opacity(
+                opacity: 0.5,
+                child: Text(
+                  '#${controller.extractPokemonId(url).toString().padLeft(3, '0')}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

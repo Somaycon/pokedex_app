@@ -20,63 +20,76 @@ class PokemonDetailLoadedWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-      child: Column(
-        children: [
-          Center(
-            child: Image.network(
-              pokemon.imageUrl,
-              height: 200,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Text(
-            pokemon.name.substring(0, 1).toUpperCase() +
-                pokemon.name.substring(1),
-            style: const TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Column(
-            spacing: 20,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              PokemonDetailCardWidget(
-                title: 'Base Info',
-                controller: controller,
-                body: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: PokemonBaseInfoWidget(
-                        pokemon: pokemon,
-                        height: pokemon.height,
-                        weight: pokemon.weight,
-                      ),
-                    ),
-                  ],
-                ),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+        child: Column(
+          children: [
+            Center(
+              child: Image.network(
+                pokemon.imageUrl,
+                height: 200,
+                fit: BoxFit.cover,
               ),
-              switch (controller.evolutionChainState) {
-                EvolutionChainInitialState() => Container(),
-                EvolutionChainLoadingState() => CircularProgressIndicator(),
-                EvolutionChainLoadedState() => PokemonDetailCardWidget(
-                  title: 'Evolution Chain',
+            ),
+            Text(
+              pokemon.name.substring(0, 1).toUpperCase() +
+                  pokemon.name.substring(1),
+              style: const TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Column(
+              spacing: 20,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                PokemonDetailCardWidget(
+                  title: 'Base Info',
                   controller: controller,
-                  body: EvolutionChainWidget(
-                    chain: controller.evolutionChainModel!.chain,
+                  body: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: PokemonBaseInfoWidget(
+                          pokemon: pokemon,
+                          height: pokemon.height,
+                          weight: pokemon.weight,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                EvolutionChainErrorState() => HomeErrorWidget(
-                  message: 'Erro ao carregar linha evolutiva',
-                  onPressed: () => controller.loadEvolutionChain(pokemonId),
-                ),
-              },
-            ],
-          ),
-        ],
+                switch (controller.evolutionChainState) {
+                  EvolutionChainInitialState() => Container(),
+                  EvolutionChainLoadingState() => CircularProgressIndicator(),
+                  EvolutionChainLoadedState() => PokemonDetailCardWidget(
+                    title: 'Evolution Chain',
+                    controller: controller,
+                    body: EvolutionChainWidget(
+                      chain: controller.evolutionChainModel!.chain,
+                    ),
+                  ),
+                  EvolutionChainErrorState() => HomeErrorWidget(
+                    message: 'Erro ao carregar linha evolutiva',
+                    onPressed: () => controller.loadEvolutionChain(pokemonId),
+                  ),
+                  EvolutionChainEmptyState(:final message) =>
+                    PokemonDetailCardWidget(
+                      title: 'Evolution Chain',
+                      controller: controller,
+                      body: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                          child: Text(message),
+                        ),
+                      ),
+                    ),
+                },
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
