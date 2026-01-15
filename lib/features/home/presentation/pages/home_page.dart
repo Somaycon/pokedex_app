@@ -4,6 +4,7 @@ import 'package:pokedex_app/features/home/presentation/controller/home_controlle
 import 'package:pokedex_app/features/home/presentation/state/home_states.dart';
 import 'package:pokedex_app/features/home/presentation/widgets/home_error_widget.dart';
 import 'package:pokedex_app/features/home/presentation/widgets/home_loaded_widget.dart';
+import 'package:pokedex_app/features/home/presentation/widgets/pokemon_search_delegate.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -49,6 +50,17 @@ class _HomePageState extends State<HomePage> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: PokemonSearchDelegate(controller: controller),
+              );
+            },
+          ),
+        ],
       ),
       body: ListenableBuilder(
         listenable: controller,
