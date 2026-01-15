@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:pokedex_app/core/error/failure.dart';
-import 'package:pokedex_app/features/home/data/models/evolution_chain_model.dart';
 import 'package:pokedex_app/features/home/data/models/pokemon_model.dart';
 import 'package:pokedex_app/features/home/domain/usecases/get_pokemon_evolution_chain_usecase.dart';
 import 'package:pokedex_app/features/home/domain/usecases/get_pokemon_list_usecase.dart';
