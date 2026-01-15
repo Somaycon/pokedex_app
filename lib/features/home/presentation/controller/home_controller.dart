@@ -3,13 +3,16 @@ import 'package:fpdart/fpdart.dart';
 import 'package:pokedex_app/core/error/failure.dart';
 import 'package:pokedex_app/features/home/data/models/pokemon_model.dart';
 import 'package:pokedex_app/features/home/domain/usecases/get_pokemon_evolution_chain_usecase.dart';
+import 'package:pokedex_app/features/home/domain/usecases/get_pokemon_detail_usecase.dart';
 import 'package:pokedex_app/features/home/domain/usecases/get_pokemon_list_usecase.dart';
 import 'package:pokedex_app/features/home/presentation/state/home_states.dart';
 
 class HomeController extends ChangeNotifier {
   final GetPokemonListUseCase getPokemonListUseCase;
+  final GetPokemonDetailUseCase getPokemonDetailUseCase;
   final GetPokemonEvolutionChainUseCase getPokemonEvolutionChainUseCase;
   List<PokemonModel> pokemonList = [];
+  List<PokemonModel>? _allPokemonsCache;
   HomeStates homeState = HomeInitialState();
 
   int currentOffset = 0;
@@ -20,6 +23,7 @@ class HomeController extends ChangeNotifier {
 
   HomeController({
     required this.getPokemonListUseCase,
+    required this.getPokemonDetailUseCase,
     required this.getPokemonEvolutionChainUseCase,
   });
 
@@ -76,5 +80,50 @@ class HomeController extends ChangeNotifier {
     final parts = url.split('/').where((part) => part.isNotEmpty).toList();
     final id = parts.last;
     return int.parse(id);
+  }
+
+  Future<List<PokemonModel>> loadAllPokemons() async {
+    if (_allPokemonsCache != null) return _allPokemonsCache!;
+
+    final int limit = totalCount > 0 ? totalCount : 100000;
+    final Either<Failure, dynamic> res = await getPokemonListUseCase({
+      'limit': limit,
+      'offset': 0,
+    });
+    return res.fold((l) => <PokemonModel>[], (r) {
+      final List<PokemonModel> list = List<PokemonModel>.from(r.results);
+      _allPokemonsCache = list;
+      return list;
+    });
+  }
+
+  Future<Either<Failure, int>> searchPokemonIdByName(String name) async {
+    final q = name.trim().toLowerCase();
+    if (q.isEmpty) return Left(CacheFailure('Nome vazio'));
+
+    final all = await loadAllPokemons();
+    final exact = all
+        .where((p) => p.name.toLowerCase() == q)
+        .toList(growable: false);
+    if (exact.isNotEmpty) {
+      try {
+        final id = extractPokemonId(exact.first.url);
+        return Right(id);
+      } catch (e) {
+        return Left(ServerFailure('Erro ao extrair id local'));
+      }
+    }
+
+    final Either<Failure, dynamic> res = await getPokemonDetailUseCase(q);
+    return res.fold(
+      (l) => Left(l),
+      (r) {
+        final id = (r.id as int?);
+        if (id == null) {
+          return Left(ServerFailure('ID não encontrado no detalhe'));
+        }
+        return Right(id);
+      },
+    );
   }
 }

@@ -12,11 +12,13 @@ class PokemonDetailController extends ChangeNotifier {
   final GetPokemonDetailUseCase getPokemonDetailUseCase;
   final GetPokemonEvolutionChainUseCase getPokemonEvolutionChainUseCase;
   PokemonDetailModel pokemon = PokemonDetailModel(
+    id: 0,
     name: '',
     imageUrl: '',
     types: [],
     height: 0,
     weight: 0,
+    speciesUrl: '',
   );
   EvolutionChainModel? evolutionChainModel;
 
