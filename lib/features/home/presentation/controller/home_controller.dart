@@ -71,4 +71,10 @@ class HomeController extends ChangeNotifier {
     final id = parts.last;
     return 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png';
   }
+
+  int extractPokemonId(String url) {
+    final parts = url.split('/').where((part) => part.isNotEmpty).toList();
+    final id = parts.last;
+    return int.parse(id);
+  }
 }

@@ -73,10 +73,4 @@ class PokemonDetailController extends ChangeNotifier {
     );
     notifyListeners();
   }
-
-  int extractPokemonId(String url) {
-    final parts = url.split('/').where((part) => part.isNotEmpty).toList();
-    final id = parts.last;
-    return int.parse(id);
-  }
 }

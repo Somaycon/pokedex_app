@@ -49,7 +49,9 @@ class HomeLoadedWidget extends StatelessWidget {
                     '/home/pokemon-detail',
                     arguments: {
                       'name': pokemonList[index].name,
-                      'pokemonId': index + 1,
+                      'pokemonId': controller.extractPokemonId(
+                        pokemonList[index].url,
+                      ),
                     },
                   );
                 },
