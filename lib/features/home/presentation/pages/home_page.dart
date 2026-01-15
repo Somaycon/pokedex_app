@@ -71,6 +71,7 @@ class _HomePageState extends State<HomePage> {
               child: CircularProgressIndicator(),
             ),
             HomeLoadedState() => HomeLoadedWidget(
+              controller: controller,
               pokemonList: controller.pokemonList,
               isLoadMore: controller.isLoadingMore,
               scrollController: _scrollController,

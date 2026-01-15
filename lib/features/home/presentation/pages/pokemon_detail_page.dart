@@ -7,7 +7,12 @@ import 'package:pokedex_app/features/home/presentation/widgets/pokemon_detail_lo
 
 class PokemonDetailPage extends StatefulWidget {
   final String name;
-  const PokemonDetailPage({super.key, required this.name});
+  final int pokemonId;
+  const PokemonDetailPage({
+    super.key,
+    required this.name,
+    required this.pokemonId,
+  });
 
   @override
   State<PokemonDetailPage> createState() => _PokemonDetailPageState();
@@ -20,6 +25,7 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
     super.initState();
     controller = Modular.get<PokemonDetailController>();
     controller.init(widget.name);
+    controller.loadEvolutionChain(widget.pokemonId);
   }
 
   @override
@@ -39,6 +45,8 @@ class _PokemonDetailPageState extends State<PokemonDetailPage> {
           ),
           PokemonDetailLoadedState() => PokemonDetailLoadedWidget(
             pokemon: controller.pokemon,
+            controller: controller,
+            pokemonId: widget.pokemonId,
           ),
           PokemonDetailErrorState(:final message) => HomeErrorWidget(
             message: message,

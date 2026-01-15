@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_app/features/home/data/models/pokemon_detail_model.dart';
-import 'package:pokedex_app/features/home/presentation/helpers/type_color_helper.dart';
-import 'package:pokedex_app/features/home/presentation/helpers/type_icon_helper.dart';
+import 'package:pokedex_app/features/home/presentation/controller/pokemon_detail_controller.dart';
+import 'package:pokedex_app/features/home/presentation/state/evolution_chain_states.dart';
+import 'package:pokedex_app/features/home/presentation/widgets/evolution_chain_widget.dart';
+import 'package:pokedex_app/features/home/presentation/widgets/home_error_widget.dart';
+import 'package:pokedex_app/features/home/presentation/widgets/pokemon_detail_card_widget.dart';
+import 'package:pokedex_app/features/home/presentation/widgets/pokemon_base_info_widget.dart';
 
 class PokemonDetailLoadedWidget extends StatelessWidget {
   final PokemonDetailModel pokemon;
+  final int pokemonId;
+  final PokemonDetailController controller;
   const PokemonDetailLoadedWidget({
     super.key,
     required this.pokemon,
+    required this.controller,
+    required this.pokemonId,
   });
 
   @override
@@ -15,7 +23,6 @@ class PokemonDetailLoadedWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Center(
             child: Image.network(
@@ -24,91 +31,49 @@ class PokemonDetailLoadedWidget extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          const SizedBox(height: 16),
           Text(
-            pokemon.name,
+            pokemon.name.substring(0, 1).toUpperCase() +
+                pokemon.name.substring(1),
             style: const TextStyle(
-              fontSize: 20,
+              fontSize: 32,
               fontWeight: FontWeight.bold,
             ),
           ),
-
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 4,
-            ),
-            itemCount: pokemon.types.length,
-            itemBuilder: (context, index) {
-              final type = pokemon.types[index];
-              final bg = getTypeColor(type);
-              final textColor = getTypeTextColor(type);
-              return Container(
-                margin: const EdgeInsets.all(8),
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: bg,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        getTypeIcon(type),
-                        size: 16,
-                        color: textColor,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        type.toUpperCase(),
-                        style: TextStyle(
-                          color: textColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-          Row(
+          Column(
             spacing: 20,
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Column(
-                children: [
-                  Icon(
-                    Icons.straighten_rounded,
-                    size: 38,
-                  ),
-                  Text(
-                    '${pokemon.height}\' ${pokemon.weight}\'\'',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+              PokemonDetailCardWidget(
+                title: 'Base Info',
+                controller: controller,
+                body: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: PokemonBaseInfoWidget(
+                        pokemon: pokemon,
+                        height: pokemon.height,
+                        weight: pokemon.weight,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              Column(
-                children: [
-                  Icon(
-                    Icons.fitness_center_rounded,
-                    size: 38,
+              switch (controller.evolutionChainState) {
+                EvolutionChainInitialState() => Container(),
+                EvolutionChainLoadingState() => CircularProgressIndicator(),
+                EvolutionChainLoadedState() => PokemonDetailCardWidget(
+                  title: 'Evolution Chain',
+                  controller: controller,
+                  body: EvolutionChainWidget(
+                    chain: controller.evolutionChainModel!.chain,
                   ),
-                  Text(
-                    '${pokemon.weight} kg',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+                EvolutionChainErrorState() => HomeErrorWidget(
+                  message: 'Erro ao carregar linha evolutiva',
+                  onPressed: () => controller.loadEvolutionChain(pokemonId),
+                ),
+              },
             ],
           ),
         ],

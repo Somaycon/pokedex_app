@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex_app/features/home/presentation/controller/home_controller.dart';
 
 class PokemonCardWidget extends StatelessWidget {
   final String url;
   final String name;
+  final HomeController controller;
   const PokemonCardWidget({
     super.key,
     required this.url,
     required this.name,
+    required this.controller,
   });
-
-  String _getPokemonImageUrl() {
-    final parts = url.split('/').where((part) => part.isNotEmpty).toList();
-    final id = parts.last;
-    return 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +28,11 @@ class PokemonCardWidget extends StatelessWidget {
         ],
       ),
       child: Column(
+        spacing: 10,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.network(
-            _getPokemonImageUrl(),
-            width: 200,
+            controller.getPokemonImageUrl(url),
             errorBuilder: (context, error, stackTrace) {
               return Container(
                 color: Colors.grey[300],
@@ -43,7 +40,13 @@ class PokemonCardWidget extends StatelessWidget {
               );
             },
           ),
-          Text(name),
+          Text(
+            name,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
         ],
       ),
     );

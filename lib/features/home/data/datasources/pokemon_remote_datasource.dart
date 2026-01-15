@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:pokedex_app/core/error/failure.dart';
 import 'package:pokedex_app/core/network/api_client.dart';
+import 'package:pokedex_app/features/home/data/models/evolution_chain_model.dart';
 import 'package:pokedex_app/features/home/data/models/pokemon_detail_model.dart';
 import 'package:pokedex_app/features/home/data/models/pokemon_response_model.dart';
 
@@ -50,6 +51,20 @@ class PokemonRemoteDatasource {
       return Left(NetworkFailure('Erro de rede. Tente novamente.'));
     } catch (_) {
       return Left(ServerFailure('Erro inesperado. Tente novamente.'));
+    }
+  }
+
+  Future<Either<Failure, EvolutionChainModel>> getEvolutionChain(
+    int id,
+  ) async {
+    try {
+      final response = await apiClient.get('/evolution-chain/$id/');
+      final evolutionChain = EvolutionChainModel.fromJson(
+        response.data,
+      );
+      return Right(evolutionChain);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
     }
   }
 }

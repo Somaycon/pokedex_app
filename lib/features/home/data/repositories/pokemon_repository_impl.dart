@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:pokedex_app/core/error/failure.dart';
 import 'package:pokedex_app/features/home/data/datasources/pokemon_local_datasource.dart';
 import 'package:pokedex_app/features/home/data/datasources/pokemon_remote_datasource.dart';
+import 'package:pokedex_app/features/home/data/models/evolution_chain_model.dart';
 import 'package:pokedex_app/features/home/data/models/pokemon_detail_model.dart';
 import 'package:pokedex_app/features/home/data/models/pokemon_response_model.dart';
 import 'package:pokedex_app/features/home/domain/repositories/pokemon_repository.dart';
@@ -60,6 +61,25 @@ class PokemonRepositoryImpl implements PokemonRepository {
       }
     } catch (e) {
       throw ServerFailure('Erro ao buscar Pokémon por nome.');
+    }
+  }
+
+  @override
+  Future<Either<Failure, EvolutionChainModel>> getEvolutionChain(
+    int id,
+  ) async {
+    try {
+      final response = await remoteDatasource.getEvolutionChain(id);
+      if (response.isRight()) {
+        final evolutionChainData = response.getOrElse(
+          (l) => throw l,
+        );
+        return Right(evolutionChainData);
+      } else {
+        return response;
+      }
+    } catch (e) {
+      throw ServerFailure('Erro ao buscar cadeia de evolução.');
     }
   }
 }

@@ -1,12 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:pokedex_app/core/error/failure.dart';
+import 'package:pokedex_app/features/home/data/models/evolution_chain_model.dart';
 import 'package:pokedex_app/features/home/data/models/pokemon_model.dart';
+import 'package:pokedex_app/features/home/domain/usecases/get_pokemon_evolution_chain_usecase.dart';
 import 'package:pokedex_app/features/home/domain/usecases/get_pokemon_list_usecase.dart';
 import 'package:pokedex_app/features/home/presentation/state/home_states.dart';
 
 class HomeController extends ChangeNotifier {
   final GetPokemonListUseCase getPokemonListUseCase;
+  final GetPokemonEvolutionChainUseCase getPokemonEvolutionChainUseCase;
   List<PokemonModel> pokemonList = [];
   HomeStates homeState = HomeInitialState();
 
@@ -14,9 +17,11 @@ class HomeController extends ChangeNotifier {
   final int limit = 20;
   int totalCount = 0;
   bool isLoadingMore = false;
+  int pokemonId = 0;
 
   HomeController({
     required this.getPokemonListUseCase,
+    required this.getPokemonEvolutionChainUseCase,
   });
 
   Future<void> init() async {
@@ -46,7 +51,6 @@ class HomeController extends ChangeNotifier {
       'limit': limit,
       'offset': currentOffset,
     });
-
     response.fold(
       (exception) {
         homeState = HomeErrorState(message: exception.toString());
@@ -62,4 +66,10 @@ class HomeController extends ChangeNotifier {
   }
 
   bool get hasMorePokemons => currentOffset + limit < totalCount;
+
+  String getPokemonImageUrl(String url) {
+    final parts = url.split('/').where((part) => part.isNotEmpty).toList();
+    final id = parts.last;
+    return 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png';
+  }
 }

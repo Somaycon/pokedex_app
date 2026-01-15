@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:pokedex_app/features/home/data/models/pokemon_model.dart';
+import 'package:pokedex_app/features/home/presentation/controller/home_controller.dart';
 import 'package:pokedex_app/features/home/presentation/widgets/pokemon_card_widget.dart';
 
 class HomeLoadedWidget extends StatelessWidget {
@@ -8,12 +9,14 @@ class HomeLoadedWidget extends StatelessWidget {
   final ScrollController scrollController;
   final bool isLoadMore;
   final Function() onLoadMore;
+  final HomeController controller;
   const HomeLoadedWidget({
     super.key,
     required this.pokemonList,
     required this.isLoadMore,
     required this.scrollController,
     required this.onLoadMore,
+    required this.controller,
   });
 
   @override
@@ -44,12 +47,18 @@ class HomeLoadedWidget extends StatelessWidget {
                 onTap: () {
                   Modular.to.pushNamed(
                     '/home/pokemon-detail',
-                    arguments: pokemonList[index].name,
+                    arguments: {
+                      'name': pokemonList[index].name,
+                      'pokemonId': index + 1,
+                    },
                   );
                 },
                 child: PokemonCardWidget(
+                  controller: controller,
                   url: pokemonList[index].url,
-                  name: pokemonList[index].name,
+                  name:
+                      pokemonList[index].name.substring(0, 1).toUpperCase() +
+                      pokemonList[index].name.substring(1),
                 ),
               ),
             );
