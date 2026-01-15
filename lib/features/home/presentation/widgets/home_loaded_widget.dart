@@ -31,11 +31,7 @@ class HomeLoadedWidget extends StatelessWidget {
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            childAspectRatio: 3 / 4,
-          ),
+        child: ListView.builder(
           itemCount: pokemonList.length + (isLoadMore ? 1 : 0),
           itemBuilder: (context, index) {
             if (index == pokemonList.length) {
