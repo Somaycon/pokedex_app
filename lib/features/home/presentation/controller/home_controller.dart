@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:pokedex_app/core/error/failure.dart';
+import 'package:pokedex_app/features/home/data/enums/sort_option.dart';
 import 'package:pokedex_app/features/home/data/models/pokemon_model.dart';
 import 'package:pokedex_app/features/home/domain/usecases/get_pokemon_evolution_chain_usecase.dart';
 import 'package:pokedex_app/features/home/domain/usecases/get_pokemon_detail_usecase.dart';
@@ -20,6 +21,7 @@ class HomeController extends ChangeNotifier {
   int totalCount = 0;
   bool isLoadingMore = false;
   int pokemonId = 0;
+  SortOption currentSortOption = SortOption.indexAsc;
 
   HomeController({
     required this.getPokemonListUseCase,
@@ -40,6 +42,33 @@ class HomeController extends ChangeNotifier {
 
     currentOffset += limit;
     await _loadPokemons();
+  }
+
+  void sortPokemons(SortOption option) {
+    currentSortOption = option;
+    if (pokemonList.isEmpty) {
+      notifyListeners();
+      return;
+    }
+    switch (option) {
+      case SortOption.indexAsc:
+        pokemonList.sort(
+          (a, b) => extractPokemonId(a.url).compareTo(extractPokemonId(b.url)),
+        );
+        break;
+      case SortOption.indexDesc:
+        pokemonList.sort(
+          (a, b) => extractPokemonId(b.url).compareTo(extractPokemonId(a.url)),
+        );
+        break;
+      case SortOption.nameAsc:
+        pokemonList.sort((a, b) => a.name.compareTo(b.name));
+        break;
+      case SortOption.nameDesc:
+        pokemonList.sort((a, b) => b.name.compareTo(a.name));
+        break;
+    }
+    notifyListeners();
   }
 
   Future<void> _loadPokemons() async {

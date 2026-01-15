@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:pokedex_app/features/home/data/enums/sort_option.dart';
 import 'package:pokedex_app/features/home/data/models/pokemon_model.dart';
 import 'package:pokedex_app/features/home/presentation/controller/home_controller.dart';
 import 'package:pokedex_app/features/home/presentation/state/home_states.dart';
@@ -69,35 +70,132 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: TextFormField(
-              controller: _searchController,
-              focusNode: _searchFocusNode,
-              textInputAction: TextInputAction.search,
-              decoration: InputDecoration(
-                hintText: 'Buscar Pokémon por nome',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(80),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _searchController,
+                    focusNode: _searchFocusNode,
+                    textInputAction: TextInputAction.search,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: 'Buscar Pokémon por nome',
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(80),
+                      ),
+                    ),
+                    onChanged: (value) async {
+                      final q = value.trim().toLowerCase();
+                      if (q.isEmpty) {
+                        setState(() => _suggestions = []);
+                        return;
+                      }
+                      final all = await controller.loadAllPokemons();
+                      final filtered = all
+                          .where((p) => p.name.toLowerCase().contains(q))
+                          .take(6)
+                          .toList(growable: false);
+                      setState(() => _suggestions = filtered);
+                    },
+                    onFieldSubmitted: (value) async {
+                      await _searchAndNavigate(value.trim().toLowerCase());
+                      _searchFocusNode.unfocus();
+                    },
+                  ),
                 ),
-              ),
-              onChanged: (value) async {
-                final q = value.trim().toLowerCase();
-                if (q.isEmpty) {
-                  setState(() => _suggestions = []);
-                  return;
-                }
-                final all = await controller.loadAllPokemons();
-                final filtered = all
-                    .where((p) => p.name.toLowerCase().contains(q))
-                    .take(6)
-                    .toList(growable: false);
-                setState(() => _suggestions = filtered);
-              },
-              onFieldSubmitted: (value) async {
-                await _searchAndNavigate(value.trim().toLowerCase());
-                _searchFocusNode.unfocus();
-              },
+                PopupMenuButton<SortOption>(
+                  color: Colors.white,
+                  icon: Icon(
+                    Icons.list,
+                    size: 30,
+                  ),
+                  onSelected: (value) => controller.sortPokemons(value),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: SortOption.indexAsc,
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            activeColor: Colors.red,
+                            shape: CircleBorder(),
+                            value:
+                                controller.currentSortOption ==
+                                SortOption.indexAsc,
+                            onChanged: (value) {
+                              if (value == true) {
+                                controller.sortPokemons(SortOption.indexAsc);
+                              }
+                            },
+                          ),
+                          Text('Ordem crescente'),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: SortOption.indexDesc,
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            shape: const CircleBorder(),
+                            value:
+                                controller.currentSortOption ==
+                                SortOption.indexDesc,
+                            onChanged: (value) {
+                              if (value == true) {
+                                controller.sortPokemons(SortOption.indexDesc);
+                              }
+                            },
+                          ),
+                          const Text('Ordem decrescente'),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: SortOption.nameAsc,
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            shape: const CircleBorder(),
+                            value:
+                                controller.currentSortOption ==
+                                SortOption.nameAsc,
+                            onChanged: (value) {
+                              if (value == true) {
+                                controller.sortPokemons(SortOption.nameAsc);
+                              }
+                            },
+                          ),
+                          const Text('Ordem alfabética (A→Z)'),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: SortOption.nameDesc,
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            shape: const CircleBorder(),
+                            value:
+                                controller.currentSortOption ==
+                                SortOption.nameDesc,
+                            onChanged: (value) {
+                              if (value == true) {
+                                controller.sortPokemons(SortOption.nameDesc);
+                              }
+                            },
+                          ),
+                          const Text('Ordem alfabética (Z→A)'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
           if (_suggestions.isNotEmpty)
