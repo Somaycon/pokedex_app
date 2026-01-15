@@ -63,7 +63,9 @@ class PokemonRemoteDatasource {
           speciesResponse.data['evolution_chain'] as Map<String, dynamic>?;
       final chainUrl = chainInfo?['url'] as String?;
       if (chainUrl == null) {
-        return Left(ServerFailure('Evolution chain not found for species $id'));
+        return Left(
+          NotFoundFailure('Evolution chain not found for species $id'),
+        );
       }
 
       final uri = Uri.parse(chainUrl);
@@ -79,9 +81,27 @@ class PokemonRemoteDatasource {
         );
       }
 
-      final response = await apiClient.get('/evolution-chain/$chainId/');
-      final evolutionChain = EvolutionChainModel.fromJson(response.data);
-      return Right(evolutionChain);
+      try {
+        final response = await apiClient.get('/evolution-chain/$chainId/');
+        final evolutionChain = EvolutionChainModel.fromJson(response.data);
+        return Right(evolutionChain);
+      } on DioException catch (e) {
+        final status = e.response?.statusCode;
+        if (status == 404) {
+          return Left(NotFoundFailure());
+        }
+        return Left(ServerFailure(e.toString()));
+      }
+    } on DioException catch (e) {
+      final status = e.response?.statusCode;
+      if (status == 404) {
+        return Left(NotFoundFailure());
+      }
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        return Left(ServerFailure('Tempo Esgotado. Verifique sua conexão.'));
+      }
+      return Left(NetworkFailure('Erro de rede. Tente novamente.'));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }

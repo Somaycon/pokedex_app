@@ -73,6 +73,17 @@ class PokemonDetailLoadedWidget extends StatelessWidget {
                   message: 'Erro ao carregar linha evolutiva',
                   onPressed: () => controller.loadEvolutionChain(pokemonId),
                 ),
+                EvolutionChainEmptyState(:final message) =>
+                  PokemonDetailCardWidget(
+                    title: 'Evolution Chain',
+                    controller: controller,
+                    body: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                        child: Text(message),
+                      ),
+                    ),
+                  ),
               },
             ],
           ),
