@@ -5,9 +5,12 @@ import 'package:pokedex_app/features/home/data/datasources/pokemon_local_datasou
 import 'package:pokedex_app/features/home/data/datasources/pokemon_remote_datasource.dart';
 import 'package:pokedex_app/features/home/data/repositories/pokemon_repository_impl.dart';
 import 'package:pokedex_app/features/home/domain/repositories/pokemon_repository.dart';
-import 'package:pokedex_app/features/home/domain/usecases/get_pokemon_list_use_case.dart';
+import 'package:pokedex_app/features/home/domain/usecases/get_pokemon_detail_usecase.dart';
+import 'package:pokedex_app/features/home/domain/usecases/get_pokemon_list_usecase.dart';
 import 'package:pokedex_app/features/home/presentation/controller/home_controller.dart';
+import 'package:pokedex_app/features/home/presentation/controller/pokemon_detail_controller.dart';
 import 'package:pokedex_app/features/home/presentation/pages/home_page.dart';
+import 'package:pokedex_app/features/home/presentation/pages/pokemon_detail_page.dart';
 
 class HomeModule extends Module {
   @override
@@ -28,7 +31,9 @@ class HomeModule extends Module {
       ),
     );
     i.addLazySingleton(GetPokemonListUseCase.new);
+    i.addLazySingleton(GetPokemonDetailUseCase.new);
     i.addLazySingleton(HomeController.new);
+    i.addLazySingleton(PokemonDetailController.new);
     super.binds(i);
   }
 
@@ -37,6 +42,12 @@ class HomeModule extends Module {
     r.child(
       '/',
       child: (context) => HomePage(),
+    );
+    r.child(
+      '/pokemon-detail',
+      child: (context) => PokemonDetailPage(
+        name: Modular.args.data,
+      ),
     );
     super.routes(r);
   }

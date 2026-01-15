@@ -12,7 +12,7 @@ class PokemonLocalDatasourceImpl implements PokemonLocalDatasource {
     final jsonString = jsonEncode(pokemonsList.toJson());
     try {
       final result = await sharedPreferences.setString(
-        CACHED_POKEMONS_KEY,
+        cached_pokemons_key,
         jsonString,
       );
       return result;
@@ -24,7 +24,7 @@ class PokemonLocalDatasourceImpl implements PokemonLocalDatasource {
   @override
   Future<PokemonResponseModel?> getLastPokemons() async {
     final sharedPreferences = await SharedPrefsHelper.instance;
-    final jsonString = sharedPreferences.getString(CACHED_POKEMONS_KEY);
+    final jsonString = sharedPreferences.getString(cached_pokemons_key);
     if (jsonString != null) {
       final Map<String, dynamic> jsonMap = json.decode(jsonString);
       return PokemonResponseModel.fromJson(jsonMap);
