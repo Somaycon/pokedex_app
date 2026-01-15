@@ -1,6 +1,6 @@
 # Pokedex App
 
-[![Made with Flutter](https://img.shields.io/badge/Made%20with-Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev) [![Dart SDK ^3.10.4](https://img.shields.io/badge/Dart-%5E3.10.4-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev) [![Platforms](https://img.shields.io/badge/Platforms-Android%20%7C%20iOS-green?style=for-the-badge&logo=android)](https://flutter.dev/docs/deployment) [![License](https://img.shields.io/badge/License-Unknown-lightgrey?style=for-the-badge)]()
+[![Made with Flutter](https://img.shields.io/badge/Made%20with-Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev) [![Dart SDK ^3.10.4](https://img.shields.io/badge/Dart-%5E3.10.4-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev) [![Platforms](https://img.shields.io/badge/Platforms-Android%20%7C%20iOS-green?style=for-the-badge&logo=android)](https://flutter.dev/docs/deployment)
 
 Descrição do projeto
 --------------------
